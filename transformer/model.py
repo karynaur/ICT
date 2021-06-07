@@ -55,7 +55,7 @@ class CausalSelfAttention(nn.Module):
         # output projection
         self.proj = nn.Linear(config.n_embd, config.n_embd)
         # causal mask to ensure that attention is only applied to the left in the input sequence
-        self.register_buffer("mask", torch.ones(config.batch_size*config.block_size*config.n_embd)
+        self.register_buffer("mask", torch.ones(config.batch_size*config.block_size*config.n_embd, dtype=torch.float)
                                      .view(config.batch_size, config.block_size, config.n_embd))
         self.n_head = config.n_head
 
@@ -63,7 +63,7 @@ class CausalSelfAttention(nn.Module):
         B, T, C = x.size()
         
         self.mask = torch.where(x == self.mask_token, 0., self.mask)
-        x = x.masked_fill(self.mask == 0, float('-inf'))
+        x = x.masked_fill(self.mask == 0., float('-inf'))
         # calculate query, key, values for all heads in batch and move head forward to be the batch dim
         k = self.key(x).view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
         q = self.query(x).view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
