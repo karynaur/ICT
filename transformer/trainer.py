@@ -65,9 +65,8 @@ class Trainer:
             is_train = split == 'train'
             model.train(is_train)
             data = self.train_dataset if is_train else self.test_dataset
-            bs = model.get_batch_size()
             loader = DataLoader(data, shuffle=True, pin_memory=True,
-                                batch_size=bs,
+                                batch_size=config.batch_size,
                                 num_workers=config.num_workers)
 
             losses = []
