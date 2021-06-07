@@ -56,7 +56,7 @@ class CausalSelfAttention(nn.Module):
         self.proj = nn.Linear(config.n_embd, config.n_embd)
         # causal mask to ensure that attention is only applied to the left in the input sequence
         self.register_buffer("mask", torch.ones(config.batch_size*config.block_size*config.n_embd, dtype=torch.double)
-                                     .view(config.batch_size, config.block_size, config.n_embd))
+                                     .reshape(config.batch_size, config.block_size, config.n_embd))
         self.n_head = config.n_head
 
     def forward(self, x, layer_past=None):
